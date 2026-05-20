@@ -1,11 +1,14 @@
-from datetime import datetime
-from sqlalchemy import String, Integer, BigInteger, Boolean, Float, Text, ForeignKey, DateTime
+from datetime import datetime, timezone
+from sqlalchemy import String, Integer, BigInteger, Boolean, Float, Text, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from app.db.base import Base
 
 
 class RankedEntry(Base):
     __tablename__ = "ranked_entries"
+    __table_args__ = (
+        UniqueConstraint("puuid", "queue_type", name="uq_ranked_puuid_queue"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     puuid: Mapped[str] = mapped_column(String(78), ForeignKey("players.puuid"), index=True)
@@ -18,6 +21,12 @@ class RankedEntry(Base):
     losses: Mapped[int] = mapped_column(Integer, default=0)
     hot_streak: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(
+
+        DateTime(timezone=True),
+
+        default=lambda: datetime.now(timezone.utc)
+
+    )
 
     player: Mapped["Player"] = relationship(back_populates="ranked_entries")

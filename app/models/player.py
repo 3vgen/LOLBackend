@@ -2,6 +2,7 @@ from datetime import datetime
 from sqlalchemy import String, Integer, BigInteger, Boolean, Float, Text, ForeignKey, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from app.db.base import Base
+from datetime import timezone
 
 
 class Player(Base):
@@ -18,7 +19,12 @@ class Player(Base):
     summoner_level: Mapped[int | None] = mapped_column(Integer)
     profile_icon_id: Mapped[int | None] = mapped_column(Integer)
 
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    # updated_at проставляется автоматически — не нужно указывать в коллекторе
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
 
     ranked_entries: Mapped[list["RankedEntry"]] = relationship(
         back_populates="player", cascade="all, delete-orphan"
