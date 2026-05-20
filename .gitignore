@@ -1,0 +1,15 @@
+.env
+
+.idea/
+
+.python-version
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+venv/
+.env/
+.venv/
+.DS_Store
