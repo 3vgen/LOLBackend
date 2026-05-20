@@ -19,3 +19,10 @@ class Player(Base):
     profile_icon_id: Mapped[int | None] = mapped_column(Integer)
 
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    ranked_entries: Mapped[list["RankedEntry"]] = relationship(
+        back_populates="player", cascade="all, delete-orphan"
+    )
+    participations: Mapped[list["MatchParticipant"]] = relationship(
+        back_populates="player"
+    )
