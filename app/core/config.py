@@ -5,6 +5,8 @@ from functools import lru_cache
 class Settings(BaseSettings):
     # --- база ---
     DATABASE_URL: str
+    DATABASE_URL_SYNC: str
+    RIOT_API_KEY: str
 
     model_config = SettingsConfigDict(
         env_file="../.env",
