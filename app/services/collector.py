@@ -215,7 +215,7 @@ async def upsert_ranked(session: AsyncSession, puuid: str, entries: list[dict]) 
         await session.execute(stmt)
 
 
-async def upsert_match(session: AsyncSession, raw: dict) -> None:
+async def upsert_match(session: AsyncSession, puuid, raw: dict) -> None:
     match = RiotMatchResponse.model_validate(raw)
     match_id = raw["metadata"]["matchId"]
 
@@ -230,23 +230,27 @@ async def upsert_match(session: AsyncSession, raw: dict) -> None:
     ).on_conflict_do_nothing(index_elements=["match_id"])
     await session.execute(stmt)
 
+    for p in match.info.participants:
+        if p.puuid == puuid:
+            stmt = pg_insert(MatchParticipant).values(
+                match_id=match_id,
+                puuid=p.puuid,
+                champion_id=p.championId,
+                champion_name=p.championName,
+                team_position=p.teamPosition,
+                kills=p.kills,
+                deaths=p.deaths,
+                assists=p.assists,
+                win=p.win,
+                total_damage_dealt=p.totalDamageDealtToChampions,
+                gold_earned=p.goldEarned,
+                cs=p.cs,                        # вычислен в Pydantic как computed_field
+                challenges_json=p.challenges,
+            ).on_conflict_do_nothing()
+        await session.execute(stmt)
     # for p in match.info.participants:
-    #     stmt = pg_insert(MatchParticipant).values(
-    #         match_id=match_id,
-    #         puuid=p.puuid,
-    #         champion_id=p.championId,
-    #         champion_name=p.championName,
-    #         team_position=p.teamPosition,
-    #         kills=p.kills,
-    #         deaths=p.deaths,
-    #         assists=p.assists,
-    #         win=p.win,
-    #         total_damage_dealt=p.totalDamageDealtToChampions,
-    #         gold_earned=p.goldEarned,
-    #         cs=p.cs,                        # вычислен в Pydantic как computed_field
-    #         challenges_json=p.challenges,
-    #     ).on_conflict_do_nothing()
-    #     await session.execute(stmt)
+    #     if p.puuid == puuid:
+    #         print(p)
 
 
 # Главная функция сбора данных
@@ -307,7 +311,7 @@ async def collect_player(
 
             async with session_factory() as session:
                 async with session.begin():
-                    await upsert_match(session, match_data)
+                    await upsert_match(session, puuid, match_data)
 
             logger.info(f"Saved match {match_id}")
 
