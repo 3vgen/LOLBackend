@@ -76,7 +76,7 @@ class RiotMatchInfoResponse(RiotBase):
 
     # После валидаторов поля уже правильных типов
     gameCreation: datetime
-    gameVersion: str  # уже нормализован в патч
+    # patch: str  # уже нормализован в патч
 
 
 class RiotMatchResponse(RiotBase):
@@ -128,7 +128,7 @@ class MatchParticipantOut(BaseModel):
 
 class MatchOut(BaseModel):
     match_id: str
-    patch: str
+    game_version: str
     queue_id: int
     game_mode: str
     game_duration: int
@@ -145,4 +145,11 @@ class ChampionAggregateOut(BaseModel):
     avg_kills: float
     avg_deaths: float
     avg_assists: float
-    kda: float
+
+    @computed_field
+    @property
+    def kda(self) -> float:
+        return round(
+            (self.avg_kills + self.avg_assists) / max(self.avg_deaths, 1),
+            2
+        )
