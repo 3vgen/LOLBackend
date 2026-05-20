@@ -6,8 +6,14 @@ from sqlalchemy.orm import selectinload
 from app.db.connections import get_db
 from app.models import Player
 from app.schemas.schemas import PlayerOut
+from app.services.collector import collect_player
+import logging
+import asyncio
+from app.core.config import settings
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 @router.get("/players/{riot_id}", response_model=PlayerOut)
@@ -38,3 +44,18 @@ async def get_player_by_riot_id(
         raise HTTPException(status_code=404, detail="Player not found")
 
     return player
+
+
+@router.get("/admin/players/{puuid}/refresh")
+async def refresh_player_by_puuid(
+    puuid: str,
+):
+    await collect_player(
+        game_name="G2 SkewMond",
+        tag_line="3327",
+        api_key=settings.RIOT_API_KEY,
+        database_url=settings.DATABASE_URL,
+    )
+
+
+
