@@ -1,6 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
+from app.db.base import Base
+from app.models import Player, RankedEntry, Match, MatchParticipant  # noqa
+
+target_metadata = Base.metadata
 
 engine = create_async_engine(settings.DATABASE_URL, future=True, echo=False)
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)  # Данные берутся сразу из памяти
