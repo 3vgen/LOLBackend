@@ -107,7 +107,7 @@ class PlayerOut(BaseModel):
     tag_line: str
     summoner_level: int | None
     profile_icon_id: int | None
-    # ranked: list[RankedEntryOut] = []
+    ranked: list[RankedEntryOut] = []
 
 
 class MatchParticipantOut(BaseModel):

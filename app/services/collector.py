@@ -341,3 +341,4 @@ if __name__ == "__main__":
         api_key=os.environ["RIOT_API_KEY"],
         database_url=os.environ["DATABASE_URL"],
     ))
+
