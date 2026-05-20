@@ -14,3 +14,4 @@ venv/
 .venv/
 .DS_Store
 alembic.ini
+test.py
