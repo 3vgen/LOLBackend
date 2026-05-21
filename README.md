@@ -12,14 +12,13 @@ DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/lolstats
 > **Важно:** Riot Developer Key живёт 24 часа. Обновлять вручную на [developer.riotgames.com](https://developer.riotgames.com).
 
 ---
-```
 
 Сбор данных и API намеренно разделены: коллектор пишет в БД, API только читает. Riot API никогда не дёргается из API-хэндлеров.
 
 ---
 
 ## API эндпоинты
-
+```
 | Метод | URL | Описание |
 |-------|-----|----------|
 | `GET` | `/healthz` | Healthcheck |
@@ -28,7 +27,7 @@ DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/lolstats
 | `GET` | `/players/{puuid}/matches` | Последние матчи (`?limit=20&offset=0`) |
 | `GET` | `/players/{puuid}/champions` | Агрегаты по чемпионам (`?limit=10`) |
 | `POST` | `/admin/players/collect?game_name=&tag_line=` | Триггер сбора данных |
-
+```
 Полная документация с примерами запросов и схемами ответов – `/docs`.
 
 ---
@@ -84,15 +83,13 @@ match_participants
 2. **Матчи** – перед запросом к Riot сравниваем список ID с тем что уже есть в БД. Тянем только новые. Уже сохранённые матчи никогда не перезапрашиваются – исторические данные не меняются.
 3. **Триггер** – `POST /admin/players/collect` запускает сбор асинхронно (202 Accepted), не блокируя запрос.
 
-```
 Первый запуск:  тянем 20 матчей из Riot – сохраняем все 20
 Второй запуск:  тянем список ID – 17 уже в БД – тянем только 3 новых
-```
 
 ---
 
 ## Обработка ошибок Riot API
-
+```
 | Код | Поведение |
 |-----|-----------|
 | `200` | Успех |
@@ -100,7 +97,7 @@ match_participants
 | `403` | Fail-fast: ключ протух, понятное сообщение об ошибке |
 | `429` | Читаем `Retry-After`, ждём, повторяем (не считается попыткой) |
 | `5xx` | Экспоненциальный backoff, до 3 попыток |
-
+```
 Rate limiter – токен-бакет на два лимита dev-ключа одновременно: 20 rps и 100 per 2 min.
 
 ---
@@ -127,12 +124,12 @@ app/
 ├── routers/
 │   └── routers.py         # FastAPI эндпоинты
 └── main.py
-
+```
+---
 alembic/                   # миграции
 docker-compose.yml
 Dockerfile
 .env.example
-```
 
 
 В `docker compose up` миграции применяются автоматически перед стартом API.
