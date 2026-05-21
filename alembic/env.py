@@ -8,6 +8,7 @@ from alembic import context
 
 from app.db.base import Base
 from app.models import Player, RankedEntry, Match, MatchParticipant  # noqa: F401
+import os
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -42,6 +43,10 @@ def run_migrations_offline() -> None:
     script output.
 
     """
+    database_url = os.getenv("DATABASE_URL_SYNC")  # берём синхронный URL
+    if database_url:
+        config.set_main_option("sqlalchemy.url", database_url)
+
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
