@@ -187,4 +187,3 @@ async def get_champion_aggregates(
         for row in rows
     ]
 
-# _6DMuFsqOQ24IzxDam4bwXNFmOeKk8aj1k616tgmkf4YNd8X8PjVdwNyawg--Y6CwiuYO67JQPrBDA
