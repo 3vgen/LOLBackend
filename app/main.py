@@ -11,7 +11,7 @@ app = FastAPI(
 app.include_router(api_router)
 
 
-@app.get("/", tags=["health"])
+@app.get("/", tags=["healthz"])
 async def root():
     return {"status": "ok", "message": "Auth is running"}
 
